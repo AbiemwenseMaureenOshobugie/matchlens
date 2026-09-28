@@ -1,6 +1,6 @@
 # MatchLens Master Context
 
-**Status:** Foundation v0.1  
+**Status:** Forecasting Workflow Specification v0.1 introduced  
 **Last updated:** 2026-09-28  
 **Repository:** AbiemwenseMaureenOshobugie/matchlens  
 **Default branch:** main
@@ -15,9 +15,11 @@ The word "prediction" in the public description refers to probabilistic forecast
 
 ## 2. Current repository state
 
-The repository is public, uses main as the default branch, has a Python .gitignore, and began with an initial README.
+The repository is public and uses main as the default branch.
 
-At Foundation v0.1 there is no forecasting implementation, dataset, model artifact, application package, or CI workflow.
+Foundation v0.1 established the constitution, product charter, and master context. The forecasting workflow specification is now the first formal technical specification.
+
+There is still no forecasting implementation, dataset, model artifact, application package, or CI workflow.
 
 ## 3. Source-of-truth hierarchy
 
@@ -26,11 +28,11 @@ When project information conflicts, use this order:
 1. PROJECT_CONSTITUTION.md — non-negotiable principles and governance.
 2. PRODUCT_CHARTER.md — product purpose, scope, and success criteria.
 3. MASTER_CONTEXT.md — current working state, terminology, decisions, and roadmap.
-4. Architecture Decision Records and approved technical specifications, once introduced.
+4. Approved technical specifications and Architecture Decision Records.
 5. Implementation code and tests.
-6. README.md — public summary derived from controlled project documents.
+6. README.md — public summary derived from controlled documents.
 
-The README must not become a second source of truth.
+Technical specifications may define implementation contracts only within the boundaries established by the constitution and product charter.
 
 ## 4. Core methodological posture
 
@@ -38,7 +40,7 @@ MatchLens is a probabilistic forecasting system, not a binary outcome classifier
 
 The initial target is pre-match 1X2 forecasting: Home, Draw, Away.
 
-The system should ultimately produce a probability distribution plus a validity/governance status.
+The system must produce a probability distribution together with a governed validity/status decision. A model output is not automatically a publishable forecast.
 
 ## 5. Initial architecture direction
 
@@ -48,7 +50,19 @@ The forecasting layer may contain multiple model families.
 
 The governance layer must be capable of preventing downstream publication when required controls fail.
 
-## 6. Expected model progression
+## 6. Formal forecasting workflow
+
+The workflow specification defines:
+
+**REQUEST → DATA SNAPSHOT → DATA VALIDATION → FEATURE SNAPSHOT → MODEL SELECTION → FORECAST GENERATION → CALIBRATION → UNCERTAINTY ASSESSMENT → GOVERNANCE DECISION → PUBLICATION/AUDIT → OUTCOME SETTLEMENT → EVALUATION**
+
+The workflow specification is located at:
+
+docs/specifications/FORECASTING_WORKFLOW.md
+
+The workflow establishes the temporal information contract, immutable forecast records, versioned provenance, fail-closed governance, reforecast/supersession behavior, outcome settlement, and post-match evaluation boundaries.
+
+## 7. Expected model progression
 
 1. Historical frequency/reference baselines.
 2. Elo-style rating baseline.
@@ -62,7 +76,7 @@ The governance layer must be capable of preventing downstream publication when r
 
 This is a working direction, not permission to implement every model automatically.
 
-## 7. Evaluation principles
+## 8. Evaluation principles
 
 Evaluation must preserve temporal causality.
 
@@ -72,13 +86,13 @@ Core evaluation dimensions are expected to include Log Loss, Brier Score, calibr
 
 Accuracy may be reported, but it is not the primary measure of probabilistic quality.
 
-## 8. Governance concepts
+## 9. Governance concepts
 
 The project will need explicit controls for data freshness, schema validity, semantic validity, entity identity, temporal availability, feature leakage, model compatibility, calibration status, model version, data version, drift, provenance, and auditability.
 
 The system should fail closed when a blocking condition is detected.
 
-## 9. Forecast status vocabulary
+## 10. Forecast status vocabulary
 
 Current working vocabulary:
 
@@ -87,9 +101,9 @@ Current working vocabulary:
 - NO_FORECAST
 - MODEL_BLOCKED
 
-These names are provisional until formal domain contracts are introduced.
+The workflow specification formalizes their role at the governance/publication boundary; exact thresholds and reason codes remain to be defined in later contracts.
 
-## 10. Key design boundaries
+## 11. Key design boundaries
 
 ### Forecasting vs. betting
 Forecast generation is the core problem. Betting or wagering decisions are downstream concerns.
@@ -100,23 +114,30 @@ A model estimates probabilities. Governance determines whether the model is curr
 ### Data vs. features
 Raw records, normalized records, derived features, and model inputs are separate artifacts with separate provenance requirements.
 
+### Forecast vs. forecast version
+A forecast event is immutable. A later forecast for the same match is a new event and may explicitly supersede an earlier event.
+
+### Forecast timestamp vs. information availability
+The time information became available is distinct from when MatchLens retrieved it. The workflow uses information availability relative to the forecast cutoff to prevent temporal leakage.
+
 ### Explanation vs. evidence
 A generated explanation may summarize recorded evidence, but must not invent evidence or override deterministic controls.
 
-## 11. Initial non-goals
+## 12. Initial non-goals
 
 Do not prematurely implement autonomous betting, live wagering execution, broad multi-league support, a consumer dashboard before the forecasting contract exists, complex deep learning without baseline evidence, uncontrolled web scraping, proprietary-data assumptions without licensing decisions, or claims based on in-sample performance.
 
-## 12. Open decisions
+## 13. Open decisions
 
 - first competition;
 - first data provider(s);
 - data licensing and redistribution boundaries;
-- exact forecast timestamp/horizon;
+- exact forecast-horizon policy;
 - initial feature contract;
 - exact baseline suite;
 - calibration method;
 - uncertainty methodology;
+- governance reason-code catalogue;
 - model registry design;
 - persistence architecture;
 - application/API boundaries;
@@ -126,10 +147,10 @@ Do not prematurely implement autonomous betting, live wagering execution, broad 
 
 These must be resolved through explicit decisions rather than silently inferred during implementation.
 
-## 13. Proposed development phases
+## 14. Proposed development phases
 
 ### Phase 0 — Foundation
-Project constitution, product charter, master context, terminology, decision process.
+Project constitution, product charter, master context, terminology, decision process, forecasting workflow specification.
 
 ### Phase 1 — Data foundation
 Provider research, data contracts, ingestion boundaries, provenance, validation, entity identity.
@@ -149,21 +170,21 @@ User-facing forecast views, diagnostics, explanations grounded in system evidenc
 ### Phase 6 — Controlled expansion
 Additional competitions, richer information, market research, or downstream decision-support only after evidence and governance review.
 
-## 14. Immediate next step
+## 15. Immediate next step
 
-The next controlled batch should define the **workflow specification** for:
+The next controlled batch should define the **MatchLens domain contracts** derived from the forecasting workflow.
 
-**request → data snapshot → validation → feature snapshot → model selection → forecast → calibration → governance decision → publication/audit → outcome settlement → evaluation**
+This should precede persistence implementation.
 
-This workflow should be specified before the domain model and persistence layer are implemented.
+The domain-contract work should define domain entities, value objects, identifiers, lifecycle/status enums, invariants, validation outcomes, forecast identity, supersession semantics, and application-port boundaries.
 
-## 15. Change discipline
+## 16. Change discipline
 
 Every material architectural decision should identify the decision, alternatives considered, rationale, consequences, status, and date/version where useful.
 
 When implementation reveals a contradiction, stop and resolve the contract rather than patching around it silently.
 
-## 16. Working principle
+## 17. Working principle
 
 MatchLens should become stronger as evidence accumulates.
 
